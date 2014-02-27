@@ -7,6 +7,8 @@ if __name__ == "__main__":
         port = sys.argv[1]
 
 class CylinderRPC(object):
+    def getVersion(self):
+        return 'Version 0.0.1'
     def loadModel(self, params, id):
         sbml = str(params['sbml'])
         rr = roadrunner.RoadRunner()
