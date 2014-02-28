@@ -8,17 +8,18 @@ if __name__ == "__main__":
 
 
 class CylinderRPC(object):
+    def __init__(self):
+        self.rr = roadrunner.RoadRunner()
+
     def getVersion(self):
         return 'Version 0.0.1'
 
-    def loadModel(self, params, id):
+    def loadModel(self, params):
         sbml = str(params['sbml'])
-        rr = roadrunner.RoadRunner()
-        self.rr = rr
-        rr.load(sbml)
+        self.rr.load(sbml)
         return True
 
-    def simulate(self, params, id):
+    def simulate(self, params):
         rr = self.rr
         rr.reset()
         return rr.simulate(params['timeStart'],
@@ -35,17 +36,17 @@ class CylinderRPC(object):
                 fun = getattr(fun, m)
             return fun(*params)
 
-    def getParameterIds(self, params, id):
+    def getParameterIds(self, params):
         rr = self.rr
         return rr.model.getGlobalParameterIds()
 
-    def getParameters(self, params, id):
+    def getParameters(self, params):
         rr = self.rr
         ids = rr.model.getGlobalParameterIds()
         values = rr.model.getGlobalParameterValues()
         return {'ids': ids, 'values': values}
 
-    def setParameterValueById(self, params, id):
+    def setParameterValueById(self, params):
         rr = self.rr
         rr.model[params['id']] = float(params['value'])
         rr.reset()
