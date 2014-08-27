@@ -21,7 +21,6 @@ class CylinderRPC(object):
 
     def simulate(self, params):
         rr = self.rr
-        rr.reset()
         return rr.simulate(params['timeStart'],
                            params['timeEnd'],
                            params['numPoints'])
@@ -49,7 +48,6 @@ class CylinderRPC(object):
     def setParameterValueById(self, params):
         rr = self.rr
         rr.model[params['id']] = float(params['value'])
-        rr.reset()
         return True
 
 s = zerorpc.Server(CylinderRPC())
