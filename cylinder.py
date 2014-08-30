@@ -1,32 +1,23 @@
-import zerorpc
 import roadrunner
-import sys
+import os
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        port = sys.argv[1]
+from celery import Celery
+
+app = Celery(
+    'cylinder',
+    backend=os.environ['BROKER_URL'],
+    broker=os.environ['BROKER_URL'])
+rr = roadrunner.RoadRunner()
 
 
-class CylinderRPC(object):
-    def __init__(self):
-        self.rr = roadrunner.RoadRunner()
+@app.task
+def add(x, y):
+    return x + y
 
-    def getVersion(self):
-        return 'Version 0.0.1'
 
-    def loadModel(self, params):
-        sbml = str(params['sbml'])
-        self.rr.load(sbml)
-        return True
-
-    def simulate(self, params):
-        rr = self.rr
-        return rr.simulate(params['timeStart'],
-                           params['timeEnd'],
-                           params['numPoints'])
-
-    def rrRun(self, method, params):
-        rr = self.rr
+@app.task
+def rrRun(method, *params):
+    if (method is not None):
         if (isinstance(method, basestring)):
             return getattr(rr, method)(*params)
         else:
@@ -34,28 +25,3 @@ class CylinderRPC(object):
             for m in method:
                 fun = getattr(fun, m)
             return fun(*params)
-
-    def getParameterIds(self, params):
-        rr = self.rr
-        return rr.model.getGlobalParameterIds()
-
-    def getParameters(self, params):
-        rr = self.rr
-        ids = rr.model.getGlobalParameterIds()
-        values = rr.model.getGlobalParameterValues()
-        return {'ids': ids, 'values': values}
-
-    def setParameterValueById(self, params):
-        rr = self.rr
-        rr.model[params['id']] = float(params['value'])
-        return True
-
-s = zerorpc.Server(CylinderRPC())
-try:
-    port
-except NameError:
-    print "Port was not defined"
-else:
-    print "Running zerorpc on Port: " + port
-    s.bind("tcp://0.0.0.0:" + port)
-    s.run()
