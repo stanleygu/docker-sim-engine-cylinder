@@ -12,5 +12,5 @@ setup(name='simworker',
       author='Stanley Gu',
       author_email='stanleygu@gmail.com',
       url='https://github.com/stanleygu/docker-sim-engine-cylinder.git',
-      packages=['cylinder']
+      packages=['']
       )

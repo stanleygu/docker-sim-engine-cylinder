@@ -5,7 +5,7 @@ import md5
 from celery import Celery
 
 app = Celery(
-    'cylinder',
+    'tasks',
     backend=os.environ['BROKER_URL'],
     broker=os.environ['BROKER_URL'])
 rr = roadrunner.RoadRunner()
