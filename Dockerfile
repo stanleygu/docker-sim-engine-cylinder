@@ -1,5 +1,5 @@
 # Makes the most basic simulation working unit
-# VERSION 0.0.1
+# VERSION 0.0.2
 
 FROM        stanleygu/roadrunner
 MAINTAINER  Stanley Gu <stanleygu@gmail.com>
