@@ -10,4 +10,4 @@ ADD         ./cylinder.py /usr/local/stanleygu/cylinder.py
 RUN         su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; pip install celery==3.1.13 redis==2.10.3"
 
 CMD         cd /usr/local/stanleygu && \
-            su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; celery -A cylinder worker --loglevel=info"
+            su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; celery -A cylinder.cylinder worker --loglevel=info"
