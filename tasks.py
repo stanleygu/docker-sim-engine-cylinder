@@ -1,6 +1,7 @@
 import roadrunner
 import os
-import md5
+import hashlib 
+import numpy as np
 
 from celery import Celery
 
@@ -12,6 +13,7 @@ rr = roadrunner.RoadRunner()
 
 currentModel = ''
 
+app.config_from_object('celeryconfig')
 
 @app.task
 def add(x, y):
@@ -23,7 +25,7 @@ def rrRun(method, *params):
     if (method is not None):
         if (method == 'load'):
             # Override load method
-            newModel = md5.new(*params).digest()
+            newModel = hashlib.md5(params[0].encode('utf-8')).hexdigest()
             global currentModel
             if (newModel == currentModel):
                 # Model already loaded
@@ -31,13 +33,19 @@ def rrRun(method, *params):
             else:
                 currentModel = newModel
                 rr.load(*params)
-        elif (isinstance(method, basestring)):
-            return getattr(rr, method)(*params)
+        elif (isinstance(method, str)):
+            result = getattr(rr, method)(*params) 
+            if isinstance(result, (np.ndarray, np.generic)):
+                result = result.tolist()
+            return result 
         else:
             fun = getattr(rr, method.pop(0))
             for m in method:
                 fun = getattr(fun, m)
-            return fun(*params)
+            result = fun(*params)
+            if isinstance(result, (np.ndarray, np.generic)):
+                result = result.tolist()
+            return result 
 
 
 @app.task
