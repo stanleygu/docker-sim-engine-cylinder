@@ -1,7 +1,8 @@
 import roadrunner
 import os
-import hashlib 
+import hashlib
 import numpy as np
+import six
 
 from celery import Celery
 
@@ -15,6 +16,7 @@ currentModel = ''
 
 app.config_from_object('celeryconfig')
 
+
 @app.task
 def add(x, y):
     return x + y
@@ -22,6 +24,9 @@ def add(x, y):
 
 @app.task
 def rrRun(method, *params):
+    if six.PY2:
+        params = tuple(str(x) if type(x) is unicode else x for x in params)
+
     if (method is not None):
         if (method == 'load'):
             # Override load method
@@ -33,11 +38,11 @@ def rrRun(method, *params):
             else:
                 currentModel = newModel
                 rr.load(*params)
-        elif (isinstance(method, str)):
-            result = getattr(rr, method)(*params) 
+        elif (isinstance(method, six.string_types)):
+            result = getattr(rr, method)(*params)
             if isinstance(result, (np.ndarray, np.generic)):
                 result = result.tolist()
-            return result 
+            return result
         else:
             fun = getattr(rr, method.pop(0))
             for m in method:
@@ -45,7 +50,7 @@ def rrRun(method, *params):
             result = fun(*params)
             if isinstance(result, (np.ndarray, np.generic)):
                 result = result.tolist()
-            return result 
+            return result
 
 
 @app.task

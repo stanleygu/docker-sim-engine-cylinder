@@ -8,6 +8,6 @@ MAINTAINER  Stanley Gu <stanleygu@gmail.com>
 ADD         . /home/user/.virtualenvs/localpy/simworker
 RUN         chown -R user /home/user/.virtualenvs/localpy/simworker
 
-RUN         su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; pip install celery==3.1.13 redis==2.10.3; pip install -e /home/user/.virtualenvs/localpy/simworker"
+RUN         su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; pip install -r /home/user/.virtualenvs/localpy/simworker/requirements.txt; pip install -e /home/user/.virtualenvs/localpy/simworker"
 
 CMD         su user -c "source /usr/local/bin/virtualenvwrapper.sh; workon localpy; celery -A tasks worker --loglevel=info"
