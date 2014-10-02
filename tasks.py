@@ -18,6 +18,12 @@ app.config_from_object('celeryconfig')
 
 
 @app.task
+def sleep(secs):
+    import time
+    time.sleep(secs)
+
+
+@app.task
 def add(x, y):
     return x + y
 
